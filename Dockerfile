@@ -9,7 +9,8 @@ ENV NAGIOSADMIN_PASS nagios
 ENV APACHE_RUN_USER nagios
 ENV APACHE_RUN_GROUP nagios
 
-RUN apt-get update && apt-get install -y build-essential snmp snmpd php5-cli apache2 libapache2-mod-php5 runit
+RUN sed -i 's/universe/universe multiverse/' /etc/apt/sources.list
+RUN apt-get update && apt-get install -y build-essential snmp snmpd snmp-mibs-downloader php5-cli apache2 libapache2-mod-php5 runit
 RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 
@@ -21,9 +22,9 @@ RUN cd /tmp && tar -zxvf nagios-plugins-1.5.tar.gz && cd nagios-plugins-1.5 && .
 RUN sed -i.bak 's/.*\=www\-data//g' /etc/apache2/envvars
 RUN export DOC_ROOT="DocumentRoot $(echo $NAGIOS_HOME/share)"; sed -i "s,DocumentRoot.*,$DOC_ROOT," /etc/apache2/sites-enabled/000-default
 
-RUN ln -s ${NAGIOS_HOME}/bin/nagios /usr/local/bin/nagios && ln -s /opt/nagios/etc /etc/nagios
+RUN ln -s ${NAGIOS_HOME}/bin/nagios /usr/local/bin/nagios && mkdir -p /usr/share/snmp/mibs
 
-RUN mkdir -p ${NAGIOS_HOME}/etc/conf.d && mkdir -p ${NAGIOS_HOME}/etc/monitor
+RUN mkdir -p ${NAGIOS_HOME}/etc/conf.d && mkdir -p ${NAGIOS_HOME}/etc/monitor && ln -s /usr/share/mibs ${NAGIOS_HOME}/libexec/mibs
 RUN echo "cfg_dir=${NAGIOS_HOME}/etc/conf.d" >> ${NAGIOS_HOME}/etc/nagios.cfg
 RUN echo "cfg_dir=${NAGIOS_HOME}/etc/monitor" >> ${NAGIOS_HOME}/etc/nagios.cfg
 
@@ -38,6 +39,6 @@ ENV APACHE_LOG_DIR /var/log/apache2
 
 EXPOSE 80
 
-VOLUME ["/opt/nagios/var", "/opt/nagios/etc", "/opt/nagios/libexec", "/var/log/apache2"]
+VOLUME ["/opt/nagios/var", "/opt/nagios/etc", "/opt/nagios/libexec", "/var/log/apache2", "/usr/share/snmp/mibs"]
 
 CMD ["/usr/local/bin/start_nagios"]
