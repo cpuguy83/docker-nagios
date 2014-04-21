@@ -8,6 +8,7 @@ ENV NAGIOSADMIN_USER nagiosadmin
 ENV NAGIOSADMIN_PASS nagios
 ENV APACHE_RUN_USER nagios
 ENV APACHE_RUN_GROUP nagios
+ENV NAGIOS_TIMEZONE US/Eastern
 
 RUN sed -i 's/universe/universe multiverse/' /etc/apt/sources.list
 RUN apt-get update && apt-get install -y build-essential snmp snmpd snmp-mibs-downloader php5-cli apache2 libapache2-mod-php5 runit
@@ -24,12 +25,14 @@ RUN export DOC_ROOT="DocumentRoot $(echo $NAGIOS_HOME/share)"; sed -i "s,Documen
 
 RUN ln -s ${NAGIOS_HOME}/bin/nagios /usr/local/bin/nagios && mkdir -p /usr/share/snmp/mibs && chmod 0755 /usr/share/snmp/mibs && touch /usr/share/snmp/mibs/.foo
 
+RUN echo "use_timezone=$NAGIOS_TIMEZONE" >> ${NAGIOS_HOME}/etc/nagios.cfg && echo "SetEnv TZ \"${NAGIOS_TIMEZONE}\"" >> /etc/apache2/conf.d/nagios.conf
+
 RUN mkdir -p ${NAGIOS_HOME}/etc/conf.d && mkdir -p ${NAGIOS_HOME}/etc/monitor && ln -s /usr/share/snmp/mibs ${NAGIOS_HOME}/libexec/mibs
 RUN echo "cfg_dir=${NAGIOS_HOME}/etc/conf.d" >> ${NAGIOS_HOME}/etc/nagios.cfg
 RUN echo "cfg_dir=${NAGIOS_HOME}/etc/monitor" >> ${NAGIOS_HOME}/etc/nagios.cfg
 RUN download-mibs && echo "mibs +ALL" > /etc/snmp/snmp.conf
 
-RUN mkdir -p /etc/sv/nagios && mkdir -p /etc/sv/apache
+RUN mkdir -p /etc/sv/nagios && mkdir -p /etc/sv/apache && rm -rf /etc/sv/getty-5
 ADD nagios.init /etc/sv/nagios/run
 ADD apache.init /etc/sv/apache/run
 
