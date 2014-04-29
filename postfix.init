@@ -1,6 +1,6 @@
 #!/bin/bash
 
-: ${MAIL_SERVER=$DB_PORT_25_TCP_ADDR}
+: ${MAIL_SERVER=$MAIL_PORT_25_TCP_ADDR}
 
 
 sed -i "s/relayhost =.*/relayhost = ${MAIL_SERVER}/" /etc/postfix/main.cf
