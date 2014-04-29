@@ -1,7 +1,10 @@
 ## Docker-Nagios ##
 
 Basic Docker image for running Nagios.<br />
-This is running Nagios 4.0.2
+This is running Nagios 4.0.5
+
+You should either link a mail container in as "mail" or set MAIL_SERVER, otherwise
+mail will not work.
 
 ### Knobs ###
 - NAGIOSADMIN_USER=nagiosadmin
