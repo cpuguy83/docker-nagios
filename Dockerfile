@@ -33,6 +33,7 @@ RUN echo "cfg_dir=${NAGIOS_HOME}/etc/monitor" >> ${NAGIOS_HOME}/etc/nagios.cfg
 RUN download-mibs && echo "mibs +ALL" > /etc/snmp/snmp.conf
 
 RUN sed -i 's,/bin/mail,/usr/bin/mail,' /opt/nagios/etc/objects/commands.cfg
+RUN cp /etc/services /var/spool/postfix/etc/
 
 RUN mkdir -p /etc/sv/nagios && mkdir -p /etc/sv/apache && rm -rf /etc/sv/getty-5 && mkdir -p /etc/sv/postfix
 ADD nagios.init /etc/sv/nagios/run
