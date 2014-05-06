@@ -8,10 +8,10 @@ ENV NAGIOSADMIN_USER nagiosadmin
 ENV NAGIOSADMIN_PASS nagios
 ENV APACHE_RUN_USER nagios
 ENV APACHE_RUN_GROUP nagios
-ENV NAGIOS_TIMEZONE US/Eastern
+ENV NAGIOS_TIMEZONE UTC
 
 RUN sed -i 's/universe/universe multiverse/' /etc/apt/sources.list
-RUN apt-get update && apt-get install -y build-essential snmp snmpd snmp-mibs-downloader php5-cli apache2 libapache2-mod-php5 runit bc postfix bsd-mailx
+RUN apt-get update && apt-get install -y iputils-ping build-essential snmp snmpd snmp-mibs-downloader php5-cli apache2 libapache2-mod-php5 runit bc postfix bsd-mailx
 RUN ( egrep -i  "^${NAGIOS_GROUP}" /etc/group || groupadd $NAGIOS_GROUP ) && ( egrep -i "^${NAGIOS_CMDGROUP}" /etc/group || groupadd $NAGIOS_CMDGROUP )
 RUN ( id -u $NAGIOS_USER || useradd --system $NAGIOS_USER -g $NAGIOS_GROUP -d $NAGIOS_HOME ) && ( id -u $NAGIOS_CMDUSER || useradd --system -d $NAGIOS_HOME -g $NAGIOS_CMDGROUP $NAGIOS_CMDUSER )
 
