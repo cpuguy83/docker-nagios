@@ -1,4 +1,4 @@
-## Docker-Nagios ##  [![Docker Build Status](http://72.14.176.28:49153/cpuguy83/nagios)](https://registry.hub.docker.com/u/cpuguy83/nagios)
+## Docker-Nagios ##  [![Docker Build Status](http://72.14.176.28/cpuguy83/nagios)](https://registry.hub.docker.com/u/cpuguy83/nagios)
 
 Basic Docker image for running Nagios.<br />
 This is running Nagios 3.5.1
