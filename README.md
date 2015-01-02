@@ -12,3 +12,16 @@ mail will not work.
 
 ### Web UI ###
 The Nagios Web UI is available on port 80 of the container<br />
+
+### Example usage ###
+    ls ./
+        configure.sh
+        commands.cfg
+    
+    cat configure.sh
+        #!/bin/bash
+        script_path=$( cd "$( dirname "$0" )" && pwd )
+        cp ${script_path}/commands.cfg /opt/nagios/etc/objects/
+
+    docker run -d --name nagios
+    docker run --rm -v $(pwd):/tmp --volumes-from nagios --entrypoint /tmp/configure.sh cpuguy83/nagios
